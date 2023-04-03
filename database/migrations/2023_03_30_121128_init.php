@@ -39,5 +39,6 @@ return new class extends Migration {
     {
         Schema::drop("activities");
         Schema::drop("users");
+        Schema::drop("activity_data");
     }
 };
