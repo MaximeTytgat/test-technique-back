@@ -12,4 +12,10 @@ class Activity extends Model
     public $timestamps = true;
 
     protected $table = 'activities';
+
+    protected $fillable = [
+        'name',
+        'description',
+        'duration'
+    ];
 }

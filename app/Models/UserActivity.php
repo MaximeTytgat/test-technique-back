@@ -12,4 +12,11 @@ class UserActivity extends Model
     public $timestamps = false;
 
     protected $table = 'activity_data';
+
+    protected $fillable = [
+        'user_id',
+        'activity_id',
+        'point_in_time',
+        'speed'
+    ];
 }

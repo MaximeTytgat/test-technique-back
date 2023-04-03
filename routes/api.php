@@ -2,7 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ActivityController;
 
 /*
 |--------------------------------------------------------------------------
@@ -21,3 +23,7 @@ use App\Http\Controllers\UserController;
 
 Route::get('user', [UserController::class, 'index']);
 Route::get('user/{id}', [UserController::class, 'show']);
+Route::get('users/{user_id}/activities/{activity_id}', [UserController::class, 'speed_user_activity']);
+
+Route::get('activities', [ActivityController::class, 'index']);
+Route::get('activities/{id}', [ActivityController::class, 'show']);
