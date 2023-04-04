@@ -25,115 +25,39 @@ class MyCommand extends Command
      */
     public function handle(): void
     {
-        $allTheText = file_get_contents(dirname(__FILE__) . "/../../../resources/my_text.txt");
+        // Lecture du contenu du fichier texte
+        $allTheText = file_get_contents(__DIR__ . "/../../../resources/my_text.txt");
+        
+        // Découpage en lignes
         $lines = explode("\n", $allTheText);
-        $words = $lineWords = [];
-        for ($i = 0; $i < count($lines); $i++) {
-            $line = $lines[$i];
-            $lineWords[] = explode(" ", $line);
-        }
-        for ($j = 0; $j < count($lineWords); $j++) {
-            $line = $lineWords[$j];
-            $wordsToAdd = [];
-            foreach ($line as $word) {
-                $wordsToAdd = array_merge($wordsToAdd, [$word]);
-                if (count($wordsToAdd) === 10) {
-                    $words = array_merge($words, [...$wordsToAdd]);
-                    $wordsToAdd = [];
-                }
-            }
-            if (count($wordsToAdd) !== 0) {
-                $words = array_merge($words, [...$wordsToAdd]);
-            }
-        }
-        foreach (str_split(",.?;!:") as $char) {
-            for ($k = 0; $k < count($words); $k++) {
-                $words[$k] = strtolower($words[$k]);
-                $words[$k] = str_replace($char, "", $words[$k]);
-                if ($k > count($words)) {
-                    break;
+        
+        // Découpage de chaque ligne en mots
+        $words = [];
+        foreach ($lines as $line) {
+            $lineWords = explode(" ", $line);
+            foreach ($lineWords as $word) {
+                $word = trim($word, ",.?;!");
+                $word = strtolower($word);
+                if (!empty($word)) {
+                    $words[] = $word;
                 }
             }
         }
-        unset($word); // todo: don't remove
-        foreach ($words as $i => $word) {
-            if (empty($word)) {
-                if (strlen($word) == 0) {
-                    unset($words[$i]);
-                }
-                unset($words[$i]);
-            }
-        }
-        $numberOfWords = count($words);
-
-        $classement = [];
-        foreach ($words as $word) {
-            if (!isset($classement[$word])) {
-                $classement[$word] = 1;
-            } else {
-                if (is_int($classement[$word]) and $classement[$word] > 0) {
-                    $count = $classement[$word];
-                    $count++;
-                    $classement[$word] = $count;
-                }
-            }
-        }
-
-        $newClassement = [];
-        foreach ($classement as $word => $count) {
-            $newClassement[] = [
-                "word" => $word,
-                "count" => $count,
-            ];
-        }
-
+        
+        // Comptage des occurrences de chaque mot
+        $wordCounts = array_count_values($words);
+        
+        // Tri des mots par ordre décroissant de nombre d'occurrences
+        arsort($wordCounts);
+        
+        // Affichage des 10 premiers mots par nombre d'occurrences
         $start = 0;
-        foreach ($newClassement as $position => $wordData) {
+        foreach ($wordCounts as $word => $count) {
             $start++;
-            $mot = $wordData["word"];
-            $nombre = $wordData["count"];
-
-            $thePosition = $position + 1;
-            echo "$thePosition: $mot avec $nombre\n";
-
+            echo "$start: $word avec $count\n";
             if ($start === 10) {
                 break;
             }
         }
-        $this->sort($newClassement, 0, count($newClassement) - 1);
-        $classementDansLOrdre = array_reverse($newClassement);
-
-        $start = 0;
-        foreach ($classementDansLOrdre as $position => $wordData) {
-            $start++;
-            $mot = $wordData["word"];
-            $nombre = $wordData["count"];
-
-            $thePosition = $position + 1;
-            echo "$thePosition: $mot avec $nombre\n";
-
-            if ($start === 10) {
-                break;
-            }
-        }
-    }
-
-    public function sort(&$array, $i, $j)
-    {
-        if ($i >= $j) {
-            return;
-        }
-
-        $m = intval(($i + $j) / 2);
-        $this->sort($array, $i, $m);
-        $this->sort($array, $m + 1, $j);
-
-        if ($array[$j]["count"] < $array[$m]["count"]) {
-            $tmp = $array[$j];
-            $array[$j] = $array[$m];
-            $array[$m] = $tmp;
-        }
-
-        $this->sort($array, $i, $j - 1);
     }
 }
